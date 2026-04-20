@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <title>Gestor · Tracker de Gastos 2026–2027</title>
+  <meta name="description" content="Tracker de gastos mensual interactivo para 2026 y 2027. Seguí tus gastos en ARS y USD con cotización del Dólar Blue en tiempo real." />
+  <meta name="theme-color" content="#07071a" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+
+  <!-- Favicon (SVG inline as data URI) -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%237c3aed'/%3E%3Ctext x='32' y='44' font-family='Inter,sans-serif' font-size='32' font-weight='900' fill='white' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+
+  <!-- Ambient background orbs -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="app">
+
+    <!-- ════════════════════════════
+         HEADER
+    ════════════════════════════ -->
+    <header>
+      <div class="hd-left">
+
+        <!-- LOGO (SVG inline) -->
+        <div class="logo-wrap" aria-label="Gestor logo">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="lg1" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#c084fc"/>
+                <stop offset="100%" stop-color="#5b21b6"/>
+              </radialGradient>
+              <radialGradient id="lg2" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.3)"/>
+                <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+              </radialGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="2" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <!-- Hexagon base -->
+            <path d="M32 2 L56 16 L56 48 L32 62 L8 48 L8 16 Z"
+                  fill="url(#lg1)" filter="url(#glow)"/>
+            <!-- Shine overlay -->
+            <path d="M32 2 L56 16 L56 48 L32 62 L8 48 L8 16 Z"
+                  fill="url(#lg2)" opacity="0.5"/>
+            <!-- G monogram -->
+            <text x="32" y="42" font-family="Inter, sans-serif"
+                  font-size="30" font-weight="900" fill="white"
+                  text-anchor="middle" filter="url(#glow)">G</text>
+            <!-- Dollar accent dot -->
+            <circle cx="44" cy="20" r="5" fill="#f59e0b" opacity="0.9"/>
+            <text x="44" y="24" font-family="Inter,sans-serif" font-size="7"
+                  font-weight="700" fill="#07071a" text-anchor="middle">$</text>
+          </svg>
+        </div>
+
+        <div>
+          <h1>Gestor</h1>
+          <p>Tracker mensual · Mayo 2026 – Diciembre 2027</p>
+        </div>
+      </div>
+
+      <!-- DÓLAR BLUE WIDGET -->
+      <div class="dolar-widget" role="region" aria-label="Cotización del Dólar Blue">
+        <div class="dolar-inner">
+          <label for="dolarInput">🇦🇷 Dólar Blue</label>
+          <div class="dolar-row">
+            <span class="dolar-sign">$</span>
+            <input
+              id="dolarInput"
+              type="number"
+              min="1"
+              step="1"
+              value="1180"
+              aria-label="Tipo de cambio Dólar Blue en ARS"
+              onchange="setDolar(this.value)"
+            />
+            <span class="dolar-currency">ARS</span>
+          </div>
+          <div id="dolarUpdated">Actualizando…</div>
+        </div>
+        <div id="liveDot" class="live-dot" title="Estado de la cotización"></div>
+        <button
+          id="refreshBtn"
+          class="refresh-btn"
+          onclick="refreshDolar()"
+          aria-label="Actualizar cotización"
+          title="Actualizar cotización en tiempo real"
+        >⟳</button>
+      </div>
+    </header>
+
+    <!-- ════════════════════════════
+         YEAR TABS
+    ════════════════════════════ -->
+    <nav class="year-tabs" role="tablist" aria-label="Seleccionar año">
+      <button class="year-tab active" data-y="2026"
+              role="tab" aria-selected="true"
+              onclick="selectYear(2026)">📅 2026</button>
+      <button class="year-tab" data-y="2027"
+              role="tab" aria-selected="false"
+              onclick="selectYear(2027)">📅 2027</button>
+    </nav>
+
+    <!-- MONTH TABS -->
+    <nav class="month-tabs" id="monthTabs" role="tablist" aria-label="Seleccionar mes"></nav>
+
+    <!-- ════════════════════════════
+         SUMMARY CARDS
+    ════════════════════════════ -->
+    <section class="cards" aria-label="Resumen del mes">
+
+      <!-- Income -->
+      <div class="card c-income">
+        <div class="card-icon" aria-hidden="true">💰</div>
+        <div class="card-lbl">Ingresos del Mes</div>
+        <input
+          class="card-inp"
+          id="incomeInp"
+          type="number"
+          min="0"
+          step="100"
+          placeholder="0"
+          aria-label="Ingresos del mes en ARS"
+          oninput="setIncome(this.value)"
+        />
+        <div class="card-sub">ARS · hacé clic para editar</div>
+      </div>
+
+      <!-- Total expenses -->
+      <div class="card c-exp">
+        <div class="card-icon" aria-hidden="true">💳</div>
+        <div class="card-lbl">Total Gastos</div>
+        <div class="card-val" id="totalGastos" aria-live="polite">$ 0</div>
+        <div class="card-sub" id="totalUSD">≈ USD 0</div>
+      </div>
+
+      <!-- Available -->
+      <div class="card c-avail">
+        <div class="card-icon" aria-hidden="true">🏦</div>
+        <div class="card-lbl">Disponible</div>
+        <div class="card-val" id="disponible" aria-live="polite">$ 0</div>
+        <div class="card-sub" id="disponibleUSD">≈ USD 0</div>
+      </div>
+
+      <!-- Savings goal -->
+      <div class="card c-save">
+        <div class="card-icon" aria-hidden="true">🎯</div>
+        <div class="card-lbl">Meta Ahorro</div>
+        <input
+          class="card-inp"
+          id="savingsInp"
+          type="number"
+          min="0"
+          step="100"
+          placeholder="0"
+          aria-label="Meta de ahorro mensual en ARS"
+          oninput="setSavings(this.value)"
+        />
+        <div class="card-sub">ARS · hacé clic para editar</div>
+      </div>
+
+    </section>
+
+    <!-- ════════════════════════════
+         PROGRESS BAR
+    ════════════════════════════ -->
+    <div class="progress-box" role="region" aria-label="Progreso del presupuesto">
+      <div class="progress-top">
+        <span class="progress-lbl">% del ingreso comprometido en gastos</span>
+        <div class="progress-right">
+          <div class="progress-pct" id="progPct" aria-live="polite">0%</div>
+          <div class="progress-detail" id="progDetail">Sin ingresos cargados</div>
+        </div>
+      </div>
+      <div class="progress-track" role="progressbar"
+           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
+           aria-label="Porcentaje del ingreso comprometido">
+        <div class="progress-fill pf-ok" id="progBar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════
+         MAIN GRID: TABLE + CHART
+    ════════════════════════════ -->
+    <div class="main-grid">
+
+      <!-- EXPENSE TABLE -->
+      <div class="box" role="region" aria-label="Lista de gastos">
+        <div class="box-head">
+          <div class="box-title">
+            Gastos
+            <span class="month-badge" id="monthLabel">Mayo 2026</span>
+          </div>
+          <button class="add-btn" id="addExpenseBtn" onclick="openModal()"
+                  aria-label="Agregar nuevo gasto">
+            ＋ Agregar gasto
+          </button>
+        </div>
+
+        <table aria-label="Tabla de gastos del mes">
+          <thead>
+            <tr>
+              <th scope="col">Gasto</th>
+              <th scope="col">Monto</th>
+              <th scope="col">En ARS</th>
+              <th scope="col">En USD</th>
+              <th scope="col">Estado</th>
+              <th scope="col" aria-label="Acciones"></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+          <tfoot id="tfoot"></tfoot>
+        </table>
+      </div>
+
+      <!-- CHART -->
+      <div class="chart-box" role="region" aria-label="Gráfico de evolución anual">
+        <div class="chart-title">Evolución <span id="chartYearLbl">2026</span></div>
+        <div class="chart-sub">Gastos mensuales en ARS · mes actual destacado</div>
+        <canvas id="chart" aria-label="Gráfico de barras de gastos mensuales"></canvas>
+        <div class="chart-leg" aria-hidden="true">
+          <div class="leg-item">
+            <div class="leg-dot" style="background:linear-gradient(135deg,#7c3aed,#a855f7)"></div>
+            Gastos
+          </div>
+          <div class="leg-item">
+            <div class="leg-dot" style="background:rgba(124,58,237,.22)"></div>
+            Ingresos
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main-grid -->
+  </div><!-- /app -->
+
+  <!-- ════════════════════════════
+       ADD / EDIT EXPENSE MODAL
+  ════════════════════════════ -->
+  <div class="overlay" id="overlay"
+       role="dialog" aria-modal="true"
+       aria-labelledby="modalTitle"
+       onclick="overlayClick(event)">
+    <div class="modal" id="modal">
+
+      <div class="mhead">
+        <span class="mtitle" id="modalTitle">Nuevo Gasto</span>
+        <button class="mclose" onclick="closeModal()"
+                aria-label="Cerrar modal">✕</button>
+      </div>
+
+      <form id="expForm" novalidate>
+        <div class="form-grid">
+
+          <!-- Name -->
+          <div class="fg">
+            <label class="flbl" for="fName">Nombre del gasto</label>
+            <input class="finp" id="fName"
+                   placeholder="Ej: Netflix, Alquiler, Gym…"
+                   autocomplete="off" required />
+          </div>
+
+          <!-- Amount + currency -->
+          <div class="fg">
+            <label class="flbl" for="fAmount">Monto</label>
+            <div class="amt-row">
+              <input class="finp" id="fAmount"
+                     type="number" step="0.01" min="0"
+                     placeholder="0" required
+                     oninput="updateArsPreview()" />
+              <select class="fsel" id="fCurrency"
+                      aria-label="Moneda"
+                      onchange="updateArsPreview()">
+                <option value="ARS">ARS</option>
+                <option value="USD">USD</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ARS preview (shown when USD selected) -->
+          <div class="fg" id="arsPreviewWrap" style="display:none">
+            <label class="flbl">Equivalente en ARS (al blue)</label>
+            <div class="ars-preview" id="arsPreview">$ 0</div>
+          </div>
+
+          <!-- Category -->
+          <div class="fg">
+            <label class="flbl" for="fCat">Categoría</label>
+            <select class="fsel" id="fCat">
+              <option value="Vivienda">🏠 Vivienda</option>
+              <option value="Alimentación">🍔 Alimentación</option>
+              <option value="Transporte">🚗 Transporte</option>
+              <option value="Salud">💊 Salud</option>
+              <option value="Entretenimiento">🎮 Entretenimiento</option>
+              <option value="Servicios">💡 Servicios / Suscripciones</option>
+              <option value="Educación">📚 Educación</option>
+              <option value="Ropa">👕 Ropa / Calzado</option>
+              <option value="Tecnología">💻 Tecnología</option>
+              <option value="Otro" selected>📌 Otro</option>
+            </select>
+          </div>
+
+          <!-- Status -->
+          <div class="fg">
+            <label class="flbl" for="fStatus">Estado</label>
+            <select class="fsel" id="fStatus">
+              <option value="pending">⏳ Pendiente</option>
+              <option value="paid">✓ Pagado</option>
+              <option value="upcoming">📅 Próximo</option>
+            </select>
+          </div>
+
+          <!-- Repeat (hidden when editing) -->
+          <div class="fg" id="repeatWrap">
+            <label class="flbl" for="fRepeat">Repetir en</label>
+            <select class="fsel" id="fRepeat">
+              <option value="once">Solo este mes</option>
+              <option value="rest-year">Resto del año corriente</option>
+              <option value="all">Todos los meses (Mayo 2026 → Dic 2027)</option>
+              <option value="bimonthly">Cada 2 meses desde este</option>
+            </select>
+          </div>
+
+          <!-- Note -->
+          <div class="fg">
+            <label class="flbl" for="fNote">Nota (opcional)</label>
+            <input class="finp" id="fNote"
+                   placeholder="Ej: vence el 15, cuota 2/12…"
+                   autocomplete="off" />
+          </div>
+
+        </div><!-- /form-grid -->
+
+        <div class="mfooter">
+          <button type="button" class="btn-cancel" onclick="closeModal()">Cancelar</button>
+          <button type="submit" class="btn-save">
+            <span>💾 Guardar Gasto</span>
+          </button>
+        </div>
+      </form>
+
+    </div><!-- /modal -->
+  </div><!-- /overlay -->
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span id="toastMsg">Guardado</span>
+  </div>
+
+  <!-- App JS -->
+  <script src="assets/js/app.js"></script>
+
+</body>
+</html>
