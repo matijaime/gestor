@@ -8,6 +8,25 @@
 'use strict';
 
 // ─────────────────────────────
+//  FIREBASE CONFIG (Compat)
+// ─────────────────────────────
+const firebaseConfig = {
+  projectId: "gestorgt-1776720646",
+  appId: "1:404817943311:web:10b141bb3d5269d1fb7c7a",
+  storageBucket: "gestorgt-1776720646.firebasestorage.app",
+  apiKey: "AIzaSyB3zegEcGBBZ5Pm_D_Yu8oM4iTON_hjoSQ",
+  authDomain: "gestorgt-1776720646.firebaseapp.com",
+  messagingSenderId: "404817943311",
+  projectNumber: "404817943311",
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+let currentUser = null;
+
+// ─────────────────────────────
 //  CONSTANTS
 // ─────────────────────────────
 
@@ -68,7 +87,7 @@ let editingIdx = null;       // null = new expense; number = index in month arra
 let _toastTimer = null;      // toast auto-hide timer
 
 // ─────────────────────────────
-//  PERSISTENCE
+//  PERSISTENCE (FIREBASE)
 // ─────────────────────────────
 
 /** Initialise & return data for a given month index */
@@ -78,18 +97,88 @@ function md(idx) {
   return S.data[k];
 }
 
-/** Persist full state to localStorage */
-function save() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(S)); } catch (e) { /* quota exceeded */ }
+/** Persist full state to Cloud Firestore */
+async function save() {
+  if (!currentUser) return;
+  try { 
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(S)); // local backup
+    await db.collection('users').doc(currentUser.uid).set(S);
+  } catch (e) {
+    console.error("Error al guardar en la nube:", e);
+    toast("⚠️ Error subiendo datos");
+  }
 }
 
-/** Restore state from localStorage */
-function load() {
+/** Restore state from Firestore (or local backup pending connection) */
+async function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) S = { ...S, ...JSON.parse(raw) };
-  } catch (e) { /* corrupted data — start fresh */ }
+    if (raw) S = { ...S, ...JSON.parse(raw) }; // Instant local load
+    
+    if (currentUser) {
+      const doc = await db.collection('users').doc(currentUser.uid).get();
+      if (doc.exists) {
+        S = { ...S, ...doc.data() };
+      }
+    }
+  } catch (e) { 
+    console.error("No se pudo cargar de Firestore", e);
+  }
 }
+
+// ─────────────────────────────
+//  AUTH LOGIC
+// ─────────────────────────────
+
+function handleLogin() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  document.getElementById('loginMsg').textContent = "Conectando...";
+  auth.signInWithPopup(provider).catch(err => {
+    console.error("Auth error", err);
+    if (err.code === 'auth/operation-not-allowed') {
+      document.getElementById('loginMsg').innerHTML = `
+        El inicio con Google no está activado en tu Firebase Console.<br>
+        1. Entra a Firebase > Authentication > Sign in method.<br>
+        2. Activa "Google" y guarda.<br>
+        3. Recarga la página.`;
+    } else {
+      document.getElementById('loginMsg').textContent = "Error al iniciar sesión: " + err.message;
+    }
+  });
+}
+
+function handleLogout() {
+  auth.signOut().then(() => {
+    S.data = {}; // clear local memory var
+    localStorage.removeItem(STORAGE_KEY);
+    window.location.reload();
+  });
+}
+
+auth.onAuthStateChanged(async (user) => {
+  const overlay = document.getElementById('loginOverlay');
+  const mainApp = document.getElementById('mainApp');
+  
+  if (user) {
+    currentUser = user;
+    overlay.style.display = 'none';
+    mainApp.style.display = 'block';
+    
+    await loadData();
+    
+    // Sync initial UI state after loading remote data
+    document.getElementById('dolarInput').value = S.blue;
+    document.getElementById('dolarUpdated').textContent = S.blueUpdated ? 'Actualizado: ' + S.blueUpdated : 'Actualizando…';
+    document.querySelectorAll('.year-tab').forEach(t => t.classList.toggle('active', +t.dataset.y === S.yearView));
+    
+    render();
+    fetchDolar();
+  } else {
+    currentUser = null;
+    overlay.style.display = 'flex';
+    mainApp.style.display = 'none';
+  }
+});
 
 // ─────────────────────────────
 //  FORMATTERS / CONVERTERS
@@ -651,25 +740,12 @@ function toast(msg) {
 // ─────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Restore persisted state
-  load();
+  
+  // Auth bindings
+  document.getElementById('loginBtn').addEventListener('click', handleLogin);
+  document.getElementById('logoutBtn').addEventListener('click', handleLogout);
 
-  // 2. Sync UI inputs with loaded state
-  document.getElementById('dolarInput').value = S.blue;
-  document.getElementById('dolarUpdated').textContent = S.blueUpdated
-    ? 'Actualizado: ' + S.blueUpdated
-    : 'Actualizando…';
-
-  // 3. Sync year tab visuals
-  document.querySelectorAll('.year-tab').forEach(t =>
-    t.classList.toggle('active', +t.dataset.y === S.yearView)
-  );
-
-  // 4. Initial render
-  render();
-
-  // 5. Fetch live dollar blue rate
-  fetchDolar();
+  // Note: loadData() and render() are now triggered by onAuthStateChanged!
 
   // 6. Close modal on Escape key
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });

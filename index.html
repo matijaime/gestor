@@ -20,6 +20,10 @@
   <!-- Favicon (SVG inline as data URI) -->
   <link rel="icon" type="image/svg+xml"
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%237c3aed'/%3E%3Ctext x='32' y='44' font-family='Inter,sans-serif' font-size='32' font-weight='900' fill='white' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E" />
+  <!-- Firebase SDK (Compat Version) -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -30,7 +34,21 @@
     <div class="orb orb-3"></div>
   </div>
 
-  <div class="app">
+  <!-- FIREBASE LOGIN OVERLAY -->
+  <div id="loginOverlay" class="login-overlay">
+    <div class="login-card">
+      <div class="login-icon">🔒</div>
+      <h2>Gestor Seguro</h2>
+      <p>Tus datos están encriptados y sincronizados en la nube. Inicia sesión para acceder a tu información.</p>
+      <button id="loginBtn" class="btn-google">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20px" height="20px"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Entrar con Google
+      </button>
+      <div id="loginMsg" class="login-msg"></div>
+    </div>
+  </div>
+
+  <div class="app" id="mainApp" style="display: none;">
 
     <!-- ════════════════════════════
          HEADER
@@ -75,6 +93,7 @@
         <div>
           <h1>Gestor</h1>
           <p>Tracker mensual · Mayo 2026 – Diciembre 2027</p>
+          <button id="logoutBtn" class="logout-btn">Desconectar</button>
         </div>
       </div>
 
