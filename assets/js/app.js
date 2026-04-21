@@ -625,14 +625,14 @@ function renderChart() {
   for (let g = 0; g <= 4; g++) {
     const y = pad.t + cH - (g / 4) * cH;
     ctx.beginPath();
-    ctx.strokeStyle = 'rgba(255,255,255,0.045)';
+    ctx.strokeStyle = 'rgba(0,0,0,0.06)';
     ctx.lineWidth   = 1;
     ctx.moveTo(pad.l, y);
     ctx.lineTo(pad.l + cW, y);
     ctx.stroke();
 
-    ctx.fillStyle = 'rgba(148,163,184,0.45)';
-    ctx.font      = '10px Inter, sans-serif';
+    ctx.fillStyle = 'rgba(120,119,116,0.7)';
+    ctx.font      = '10px DM Sans, Helvetica Neue, sans-serif';
     ctx.textAlign = 'right';
     ctx.fillText(shortNum(maxVal * g / 4), pad.l - 6, y + 3);
   }
@@ -647,7 +647,7 @@ function renderChart() {
     for (let g = 0; g <= 4; g++) {
       const y = pad.t + cH - (g / 4) * cH;
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(255,255,255,0.045)';
+      ctx.strokeStyle = 'rgba(0,0,0,0.06)';
       ctx.lineWidth   = 1;
       ctx.moveTo(pad.l, y);
       ctx.lineTo(pad.l + cW, y);
@@ -664,8 +664,8 @@ function renderChart() {
       if (incomes[j] > 0) {
         const ih = (incomes[j] / maxVal) * cH * progress;
         const gI = ctx.createLinearGradient(0, pad.t + cH - ih, 0, pad.t + cH);
-        gI.addColorStop(0, 'rgba(124,58,237,0.2)');
-        gI.addColorStop(1, 'rgba(124,58,237,0.02)');
+        gI.addColorStop(0, 'rgba(0,0,0,0.10)');
+        gI.addColorStop(1, 'rgba(0,0,0,0.02)');
         ctx.fillStyle = gI;
         ctx.fillRect(cx - bw, pad.t + cH - ih, bw * 0.9, ih);
       }
@@ -673,25 +673,14 @@ function renderChart() {
       // Expense bar (vibrant)
       if (totals[j] > 0) {
         const th = (totals[j] / maxVal) * cH * progress;
-        const gE = ctx.createLinearGradient(0, pad.t + cH - th, 0, pad.t + cH);
-        gE.addColorStop(0, active ? '#c084fc' : '#7c3aed');
-        gE.addColorStop(1, active ? '#7c3aed' : '#4c1d95');
-        ctx.fillStyle = gE;
+        ctx.fillStyle = active ? '#111111' : 'rgba(0,0,0,0.22)';
         drawRoundBar(ctx, cx + bw * 0.1, pad.t + cH - th, bw * 0.85, th, 4);
         ctx.fill();
-
-        // Active bar glow
-        if (active && frame >= FRAMES) {
-          ctx.shadowColor = 'rgba(168,85,247,0.6)';
-          ctx.shadowBlur  = 12;
-          ctx.fill();
-          ctx.shadowBlur  = 0;
-        }
       }
 
       // Month label
-      ctx.fillStyle = active ? '#c084fc' : 'rgba(148,163,184,0.55)';
-      ctx.font      = `${active ? 'bold ' : ''}10px Inter, sans-serif`;
+      ctx.fillStyle = active ? '#111111' : 'rgba(120,119,116,0.6)';
+      ctx.font      = `${active ? '600 ' : ''}10px DM Sans, Helvetica Neue, sans-serif`;
       ctx.textAlign = 'center';
       ctx.fillText(m.s, cx + bw * 0.5 - bw * 0.05, pad.t + cH + 18);
     });

@@ -29,3 +29,8 @@ build/
 # Environment files
 .env
 .env.local
+
+# Agents
+.agents/
+.claude/
+skills-lock.json
