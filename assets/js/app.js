@@ -132,19 +132,47 @@ async function loadData() {
 
 function handleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const isInAppBrowser = (ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1) || 
+                         (ua.indexOf("Instagram") > -1) || (ua.indexOf("WhatsApp") > -1) ||
+                         (ua.indexOf("Line") > -1);
+
+  if (isInAppBrowser) {
+    document.getElementById('loginMsg').innerHTML = `
+      <div style="background: rgba(255,59,48,0.1); color: #ff3b30; padding: 12px; border-radius: 8px; font-weight: 500;">
+        ⚠️ Estás usando el navegador de WhatsApp/Instagram.<br><br>
+        Por cuestiones de seguridad de Google, para iniciar sesión debés abrir esta página en tu navegador principal.<br><br>
+        <b>Tocá el ícono de los 3 puntos (o el de compartir) arriba y elegí "Abrir en el navegador" o "Abrir en Safari/Chrome".</b>
+      </div>
+    `;
+    return;
+  }
+
+  // Use redirect on mobile for better UX, popup on desktop
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
   document.getElementById('loginMsg').textContent = "Conectando...";
-  auth.signInWithPopup(provider).catch(err => {
-    console.error("Auth error", err);
-    if (err.code === 'auth/operation-not-allowed') {
-      document.getElementById('loginMsg').innerHTML = `
-        El inicio con Google no está activado en tu Firebase Console.<br>
-        1. Entra a Firebase > Authentication > Sign in method.<br>
-        2. Activa "Google" y guarda.<br>
-        3. Recarga la página.`;
-    } else {
-      document.getElementById('loginMsg').textContent = "Error al iniciar sesión: " + err.message;
-    }
-  });
+
+  if (isMobile) {
+    auth.signInWithRedirect(provider).catch(err => showError(err));
+  } else {
+    auth.signInWithPopup(provider).catch(err => showError(err));
+  }
+}
+
+// Global redirect result handler for mobile
+auth.getRedirectResult().catch(err => showError(err));
+
+function showError(err) {
+  console.error("Auth error", err);
+  if (err.code === 'auth/operation-not-allowed') {
+    document.getElementById('loginMsg').innerHTML = `
+      El inicio con Google no está activado en tu Firebase Console.<br>
+      1. Entra a Firebase > Authentication > Sign in method.<br>
+      2. Activa "Google" y guarda.<br>
+      3. Recarga la página.`;
+  } else {
+    document.getElementById('loginMsg').textContent = "Error al iniciar sesión: " + err.message;
+  }
 }
 
 function handleLogout() {
