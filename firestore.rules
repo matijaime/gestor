@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // User data — solo el dueño puede leer/escribir
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Quick expenses — escritura abierta para el iOS Shortcut (sin auth)
+    // La app principal importa y borra estos docs al cargar
+    match /quick_expenses/{docId} {
+      allow read, write: if true;
+    }
+
+  }
+}
