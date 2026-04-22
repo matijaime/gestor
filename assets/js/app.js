@@ -114,16 +114,69 @@ async function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) S = { ...S, ...JSON.parse(raw) }; // Instant local load
-    
+
     if (currentUser) {
       const doc = await db.collection('users').doc(currentUser.uid).get();
       if (doc.exists) {
         S = { ...S, ...doc.data() };
       }
     }
-  } catch (e) { 
+  } catch (e) {
     console.error("No se pudo cargar de Firestore", e);
   }
+}
+
+/** Import pending expenses added via iOS Shortcut */
+async function importPendingExpenses() {
+  if (!currentUser) return;
+  try {
+    const snap = await db.collection('quick_expenses')
+      .where('uid', '==', currentUser.uid)
+      .get();
+    if (snap.empty) return;
+
+    const batch = db.batch();
+    let imported = 0;
+
+    snap.forEach(docSnap => {
+      const f = docSnap.data();
+      const idx = currentMonthIndex();
+      const k   = String(idx);
+      if (!S.data[k]) S.data[k] = { income: 0, savings: 0, expenses: [] };
+      S.data[k].expenses.push({
+        id:       docSnap.id,
+        name:     f.name     || 'Sin nombre',
+        amount:   f.amount   || 0,
+        currency: f.currency || 'ARS',
+        cat:      f.cat      || 'Otro',
+        paid:     false,
+      });
+      batch.delete(docSnap.ref);
+      imported++;
+    });
+
+    if (imported > 0) {
+      await batch.commit();
+      await save();
+      toast(`✅ ${imported} gasto${imported > 1 ? 's' : ''} importado${imported > 1 ? 's' : ''} desde el widget`);
+      render();
+    }
+  } catch (e) {
+    console.error('Error importando gastos del widget:', e);
+  }
+}
+
+/** Get tracker month index for today's real date */
+function currentMonthIndex() {
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth();
+  const map = [
+    [2026,4,0],[2026,5,1],[2026,6,2],[2026,7,3],[2026,8,4],[2026,9,5],[2026,10,6],[2026,11,7],
+    [2027,0,8],[2027,1,9],[2027,2,10],[2027,3,11],[2027,4,12],[2027,5,13],[2027,6,14],[2027,7,15],
+    [2027,8,16],[2027,9,17],[2027,10,18],[2027,11,19],
+  ];
+  const found = map.find(([my, mm]) => my === y && mm === m);
+  return found ? found[2] : S.monthIdx;
 }
 
 // ─────────────────────────────
@@ -193,7 +246,8 @@ auth.onAuthStateChanged(async (user) => {
     mainApp.style.display = 'block';
     
     await loadData();
-    
+    await importPendingExpenses();
+
     // Sync initial UI state after loading remote data
     document.getElementById('dolarInput').value = S.blue;
     document.getElementById('dolarUpdated').textContent = S.blueUpdated ? 'Actualizado: ' + S.blueUpdated : 'Actualizando…';
