@@ -255,6 +255,9 @@ auth.onAuthStateChanged(async (user) => {
     
     render();
     fetchDolar();
+
+    // Poll for expenses added via iOS Shortcut every 20 seconds
+    setInterval(importPendingExpenses, 20000);
   } else {
     currentUser = null;
     overlay.style.display = 'flex';
