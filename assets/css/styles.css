@@ -794,13 +794,40 @@ tbody td {
 ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.15); }
 
 /* ─────────────────────────────
+   FAB — Botón flotante "Gastos"
+───────────────────────────── */
+.fab-gasto {
+  display: none;
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  background: var(--ink-1);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 28px;
+  font: 700 15px/1 'DM Sans', sans-serif;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+  transition: transform 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.fab-gasto:active { transform: translateX(-50%) scale(0.96); }
+
+/* ─────────────────────────────
    RESPONSIVE
 ───────────────────────────── */
 @media(max-width:640px) {
-  .app { padding: 20px 16px 60px; }
+  .app { padding: 20px 16px 100px; }
   header { flex-direction: column; }
   .hd-left h1 { font-size: 22px; }
   .dolar-widget { width: 100%; }
+  .fab-gasto { display: flex; }
 }
 
 /* ─────────────────────────────

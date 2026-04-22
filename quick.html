@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Gastos" />
+  <meta name="theme-color" content="#07071a" />
+  <title>Gastos</title>
+
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2307071a'/%3E%3Ctext x='90' y='125' font-family='Georgia,serif' font-size='100' fill='white' text-anchor='middle'%3E💳%3C/text%3E%3C/svg%3E" />
+
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #07071a;
+      --surface: #111128;
+      --border:  rgba(255,255,255,0.08);
+      --ink-1:   #ffffff;
+      --ink-2:   rgba(255,255,255,0.45);
+      --accent:  #7c3aed;
+      --radius:  16px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink-1);
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: env(safe-area-inset-top, 20px) 24px env(safe-area-inset-bottom, 20px);
+      min-height: 100dvh;
+    }
+
+    /* ── LOGIN ── */
+    #loginScreen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      text-align: center;
+      width: 100%;
+      max-width: 320px;
+    }
+    .logo { font-size: 48px; }
+    #loginScreen h1 { font-size: 22px; font-weight: 700; }
+    #loginScreen p  { font-size: 14px; color: var(--ink-2); line-height: 1.5; }
+    .btn-google {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 15px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--ink-1);
+      font: 600 15px 'DM Sans', sans-serif; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-google:active { background: rgba(255,255,255,0.05); }
+
+    /* ── FORM ── */
+    #appScreen {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .top-bar h1 { font-size: 20px; font-weight: 700; }
+    .month-tag {
+      font-size: 12px; font-weight: 600;
+      background: rgba(124,58,237,0.2);
+      color: #a78bfa;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-2);
+    }
+    input, select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--ink-1);
+      font: 500 18px 'DM Sans', sans-serif;
+      padding: 16px 18px;
+      width: 100%;
+      outline: none;
+      -webkit-appearance: none;
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus { border-color: var(--accent); }
+    input::placeholder { color: var(--ink-2); }
+
+    .amt-row { display: flex; gap: 10px; }
+    .amt-row input { flex: 1; }
+    .amt-row select { width: 90px; flex: none; }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .cat-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--ink-2);
+      font: 500 12px 'DM Sans', sans-serif;
+      padding: 10px 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.12s;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .cat-btn .emoji { font-size: 20px; }
+    .cat-btn.selected {
+      border-color: var(--accent);
+      background: rgba(124,58,237,0.15);
+      color: var(--ink-1);
+    }
+
+    .btn-save {
+      width: 100%;
+      padding: 18px;
+      background: var(--ink-1);
+      border: none;
+      border-radius: var(--radius);
+      color: #07071a;
+      font: 700 17px 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: transform 0.12s, opacity 0.12s;
+      margin-top: 4px;
+    }
+    .btn-save:active { transform: scale(0.97); }
+    .btn-save:disabled { opacity: 0.4; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 16px) + 16px);
+      left: 50%; transform: translateX(-50%) translateY(80px);
+      background: #1a1a2e; border: 1px solid var(--border);
+      color: var(--ink-1); font-size: 14px; font-weight: 600;
+      padding: 12px 22px; border-radius: 50px;
+      white-space: nowrap;
+      transition: transform 0.3s cubic-bezier(.34,1.3,.64,1), opacity 0.3s;
+      opacity: 0; pointer-events: none; z-index: 999;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* ── SUCCESS ── */
+    #successScreen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+    .check { font-size: 64px; animation: pop 0.4s cubic-bezier(.34,1.3,.64,1); }
+    @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+    #successScreen h2 { font-size: 22px; font-weight: 700; }
+    #successScreen p  { font-size: 15px; color: var(--ink-2); }
+    .btn-otro {
+      margin-top: 8px; padding: 15px 32px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--ink-1);
+      font: 600 15px 'DM Sans', sans-serif; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="loginScreen">
+    <div class="logo">💳</div>
+    <h1>Agregar Gasto</h1>
+    <p>Iniciá sesión para guardar gastos directamente desde el inicio.</p>
+    <button class="btn-google" id="loginBtn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Entrar con Google
+    </button>
+    <div id="loginMsg" style="font-size:13px;color:var(--ink-2);"></div>
+  </div>
+
+  <!-- FORM -->
+  <div id="appScreen">
+    <div class="top-bar">
+      <h1>Nuevo Gasto</h1>
+      <div class="month-tag" id="monthTag">—</div>
+    </div>
+
+    <div class="field">
+      <label for="fName">¿Qué gastaste?</label>
+      <input id="fName" type="text" placeholder="Ej: Almuerzo, Nafta, Netflix…"
+             autocomplete="off" autocorrect="off" spellcheck="false" />
+    </div>
+
+    <div class="field">
+      <label>Monto</label>
+      <div class="amt-row">
+        <input id="fAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0" />
+        <select id="fCurrency">
+          <option value="ARS">ARS</option>
+          <option value="USD">USD</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Categoría</label>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+
+    <button class="btn-save" id="saveBtn" onclick="saveExpense()">Guardar</button>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="successScreen">
+    <div class="check">✅</div>
+    <h2>¡Guardado!</h2>
+    <p id="successMsg">—</p>
+    <button class="btn-otro" onclick="resetForm()">Agregar otro</button>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    const firebaseConfig = {
+      projectId:         "gestorgt-1776720646",
+      appId:             "1:404817943311:web:10b141bb3d5269d1fb7c7a",
+      storageBucket:     "gestorgt-1776720646.firebasestorage.app",
+      apiKey:            "AIzaSyB3zegEcGBBZ5Pm_D_Yu8oM4iTON_hjoSQ",
+      authDomain:        "gestorgt-1776720646.firebaseapp.com",
+      messagingSenderId: "404817943311",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db   = firebase.firestore();
+    const auth = firebase.auth();
+
+    const MONTHS = [
+      { i:0,  name:'Mayo',       y:2026 },
+      { i:1,  name:'Junio',      y:2026 },
+      { i:2,  name:'Julio',      y:2026 },
+      { i:3,  name:'Agosto',     y:2026 },
+      { i:4,  name:'Septiembre', y:2026 },
+      { i:5,  name:'Octubre',    y:2026 },
+      { i:6,  name:'Noviembre',  y:2026 },
+      { i:7,  name:'Diciembre',  y:2026 },
+      { i:8,  name:'Enero',      y:2027 },
+      { i:9,  name:'Febrero',    y:2027 },
+      { i:10, name:'Marzo',      y:2027 },
+      { i:11, name:'Abril',      y:2027 },
+      { i:12, name:'Mayo',       y:2027 },
+      { i:13, name:'Junio',      y:2027 },
+      { i:14, name:'Julio',      y:2027 },
+      { i:15, name:'Agosto',     y:2027 },
+      { i:16, name:'Septiembre', y:2027 },
+      { i:17, name:'Octubre',    y:2027 },
+      { i:18, name:'Noviembre',  y:2027 },
+      { i:19, name:'Diciembre',  y:2027 },
+    ];
+
+    const CATS = {
+      Alimentación:   '🍔',
+      Transporte:     '🚗',
+      Vivienda:       '🏠',
+      Salud:          '💊',
+      Entretenimiento:'🎮',
+      Servicios:      '💡',
+      Educación:      '📚',
+      Ropa:           '👕',
+      Tecnología:     '💻',
+      Otro:           '📌',
+    };
+
+    const STORAGE_KEY = 'gestor_tracker_2627';
+
+    let currentUser = null;
+    let selectedCat = 'Otro';
+    let S = null;
+
+    // ── Detect current month ──
+    function currentMonthIdx() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth(); // 0-based
+      // Map real month+year to tracker index
+      const map = [
+        [2026,4,0],[2026,5,1],[2026,6,2],[2026,7,3],[2026,8,4],[2026,9,5],[2026,10,6],[2026,11,7],
+        [2027,0,8],[2027,1,9],[2027,2,10],[2027,3,11],[2027,4,12],[2027,5,13],[2027,6,14],[2027,7,15],
+        [2027,8,16],[2027,9,17],[2027,10,18],[2027,11,19],
+      ];
+      const found = map.find(([my,mm]) => my === y && mm === m);
+      return found ? found[2] : 0;
+    }
+
+    // ── Build category grid ──
+    function buildCats() {
+      const grid = document.getElementById('catGrid');
+      grid.innerHTML = '';
+      for (const [name, emoji] of Object.entries(CATS)) {
+        const btn = document.createElement('button');
+        btn.className = 'cat-btn' + (name === selectedCat ? ' selected' : '');
+        btn.innerHTML = `<span class="emoji">${emoji}</span>${name}`;
+        btn.onclick = () => {
+          selectedCat = name;
+          document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+        };
+        grid.appendChild(btn);
+      }
+    }
+
+    // ── Save expense ──
+    async function saveExpense() {
+      const name   = document.getElementById('fName').value.trim();
+      const amount = parseFloat(document.getElementById('fAmount').value);
+      const curr   = document.getElementById('fCurrency').value;
+
+      if (!name)        { toast('Escribí el nombre del gasto'); return; }
+      if (!amount || amount <= 0) { toast('Ingresá un monto válido'); return; }
+
+      const btn = document.getElementById('saveBtn');
+      btn.disabled = true;
+      btn.textContent = 'Guardando…';
+
+      try {
+        const idx = currentMonthIdx();
+        const k   = String(idx);
+
+        // Load latest state from Firestore
+        const doc = await db.collection('users').doc(currentUser.uid).get();
+        S = doc.exists ? doc.data() : { blue: 1180, blueUpdated: null, yearView: 2026, monthIdx: 0, data: {} };
+        if (!S.data)    S.data    = {};
+        if (!S.data[k]) S.data[k] = { income: 0, savings: 0, expenses: [] };
+
+        const expense = {
+          id:       Date.now().toString(36) + Math.random().toString(36).slice(2),
+          name,
+          amount,
+          currency: curr,
+          cat:      selectedCat,
+          paid:     false,
+        };
+
+        S.data[k].expenses.push(expense);
+        await db.collection('users').doc(currentUser.uid).set(S);
+
+        const month = MONTHS[idx];
+        const label = curr === 'ARS'
+          ? `$ ${Math.round(amount).toLocaleString('es-AR')}`
+          : `USD ${amount.toLocaleString('es-AR')}`;
+
+        document.getElementById('successMsg').textContent =
+          `${CATS[selectedCat]} ${name} · ${label} · ${month.name} ${month.y}`;
+
+        document.getElementById('appScreen').style.display    = 'none';
+        document.getElementById('successScreen').style.display = 'flex';
+
+      } catch (e) {
+        console.error(e);
+        toast('Error al guardar. Intentá de nuevo.');
+        btn.disabled    = false;
+        btn.textContent = 'Guardar';
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('fName').value   = '';
+      document.getElementById('fAmount').value = '';
+      selectedCat = 'Otro';
+      buildCats();
+      document.getElementById('successScreen').style.display = 'none';
+      document.getElementById('appScreen').style.display     = 'flex';
+      document.getElementById('saveBtn').disabled    = false;
+      document.getElementById('saveBtn').textContent = 'Guardar';
+      setTimeout(() => document.getElementById('fName').focus(), 100);
+    }
+
+    // ── Toast ──
+    let _tt;
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(_tt);
+      _tt = setTimeout(() => el.classList.remove('show'), 2800);
+    }
+
+    // ── Auth ──
+    document.getElementById('loginBtn').onclick = () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      document.getElementById('loginMsg').textContent = 'Conectando…';
+      auth.signInWithRedirect(provider).catch(e => {
+        document.getElementById('loginMsg').textContent = 'Error: ' + e.message;
+      });
+    };
+
+    auth.getRedirectResult().catch(() => {});
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        currentUser = user;
+        document.getElementById('loginScreen').style.display  = 'none';
+        document.getElementById('appScreen').style.display    = 'flex';
+
+        const idx   = currentMonthIdx();
+        const month = MONTHS[idx];
+        document.getElementById('monthTag').textContent = `${month.name} ${month.y}`;
+
+        buildCats();
+        setTimeout(() => document.getElementById('fName').focus(), 300);
+      } else {
+        currentUser = null;
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('appScreen').style.display   = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
