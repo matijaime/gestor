@@ -13,8 +13,6 @@
 				<string>¿Qué gastaste?</string>
 				<key>WFInputType</key>
 				<string>Text</string>
-				<key>WFVariableName</key>
-				<string>Nombre</string>
 			</dict>
 		</dict>
 		<dict>
@@ -35,8 +33,6 @@
 				<string>¿Cuánto gastaste? (ARS)</string>
 				<key>WFInputType</key>
 				<string>Number</string>
-				<key>WFVariableName</key>
-				<string>Monto</string>
 			</dict>
 		</dict>
 		<dict>
@@ -59,14 +55,14 @@
 					<dict>
 						<key>attachmentsByRange</key>
 						<dict>
-							<key>{113, 1}</key>
+							<key>{115, 1}</key>
 							<dict>
 								<key>Type</key>
 								<string>Variable</string>
 								<key>VariableName</key>
 								<string>Monto</string>
 							</dict>
-							<key>{55, 1}</key>
+							<key>{87, 1}</key>
 							<dict>
 								<key>Type</key>
 								<string>Variable</string>
@@ -80,8 +76,6 @@
 					<key>WFSerializationType</key>
 					<string>WFTextTokenString</string>
 				</dict>
-				<key>WFVariableName</key>
-				<string>Body</string>
 			</dict>
 		</dict>
 		<dict>
@@ -137,7 +131,7 @@
 				</dict>
 				<key>WFHTTPMethod</key>
 				<string>POST</string>
-				<key>WFRequestVariable</key>
+				<key>WFInput</key>
 				<dict>
 					<key>Value</key>
 					<dict>
@@ -178,6 +172,8 @@
 					<key>WFSerializationType</key>
 					<string>WFTextTokenString</string>
 				</dict>
+				<key>WFNotificationActionSound</key>
+				<true/>
 				<key>WFNotificationActionTitle</key>
 				<string>✅ Gasto guardado</string>
 			</dict>
