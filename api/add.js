@@ -1,10 +1,16 @@
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-  const { name, amount, currency = 'ARS', uid } = req.query;
+  // Accept both query params (GET) and JSON body (POST)
+  const q = req.query;
+  const b = req.body || {};
+  const name     = q.name     || b.name;
+  const amount   = q.amount   || b.amount;
+  const currency = q.currency || b.currency || 'ARS';
+  const uid      = q.uid      || b.uid      || 'iPnoL7139ThQ1sctqWSfokqhNvV2';
 
-  if (!name || !amount || !uid) {
-    return res.status(400).json({ error: 'Faltan parámetros: name, amount, uid' });
+  if (!name || !amount) {
+    return res.status(400).json({ error: 'Faltan parámetros: name, amount' });
   }
 
   const API_KEY = 'AIzaSyB3zegEcGBBZ5Pm_D_Yu8oM4iTON_hjoSQ';
