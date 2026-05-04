@@ -23,6 +23,7 @@ export default async function handler(req, res) {
       name:     { stringValue: name },
       amount:   { doubleValue: parseFloat(amount) },
       currency: { stringValue: currency },
+      category: { stringValue: 'Otro' },
       cat:      { stringValue: 'Otro' },
     }
   };

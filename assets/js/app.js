@@ -130,9 +130,7 @@ async function loadData() {
 async function importPendingExpenses() {
   if (!currentUser) return;
   try {
-    const snap = await db.collection('quick_expenses')
-      .where('uid', '==', currentUser.uid)
-      .get();
+    const snap = await db.collection('quick_expenses').get();
     if (snap.empty) return;
 
     const batch = db.batch();
@@ -140,16 +138,20 @@ async function importPendingExpenses() {
 
     snap.forEach(docSnap => {
       const f = docSnap.data();
+      // Skip docs that belong to a different user (uid field present but doesn't match)
+      if (f.uid && f.uid !== currentUser.uid) return;
+
       const idx = currentMonthIndex();
       const k   = String(idx);
       if (!S.data[k]) S.data[k] = { income: 0, savings: 0, expenses: [] };
       S.data[k].expenses.push({
         id:       docSnap.id,
-        name:     f.name     || 'Sin nombre',
-        amount:   f.amount   || 0,
-        currency: f.currency || 'ARS',
-        cat:      f.cat      || 'Otro',
-        paid:     false,
+        name:     f.name              || 'Sin nombre',
+        amount:   f.amount            || 0,
+        currency: f.currency          || 'ARS',
+        category: f.category || f.cat || 'Otro',
+        status:   'pending',
+        note:     f.note              || '',
       });
       batch.delete(docSnap.ref);
       imported++;
