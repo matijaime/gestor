@@ -1,13 +1,11 @@
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-  // Accept both query params (GET) and JSON body (POST)
   const q = req.query;
   const b = req.body || {};
   const name     = q.name     || b.name;
   const amount   = q.amount   || b.amount;
   const currency = q.currency || b.currency || 'ARS';
-  const uid      = q.uid      || b.uid      || 'iPnoL7139ThQ1sctqWSfokqhNvV2';
 
   if (!name || !amount) {
     return res.status(400).json({ error: 'Faltan parámetros: name, amount' });
@@ -19,12 +17,10 @@ export default async function handler(req, res) {
 
   const body = {
     fields: {
-      uid:      { stringValue: uid },
-      name:     { stringValue: name },
+      name:     { stringValue: String(name) },
       amount:   { doubleValue: parseFloat(amount) },
-      currency: { stringValue: currency },
+      currency: { stringValue: String(currency) },
       category: { stringValue: 'Otro' },
-      cat:      { stringValue: 'Otro' },
     }
   };
 

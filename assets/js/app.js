@@ -138,9 +138,6 @@ async function importPendingExpenses() {
 
     snap.forEach(docSnap => {
       const f = docSnap.data();
-      // Skip docs that belong to a different user (uid field present but doesn't match)
-      if (f.uid && f.uid !== currentUser.uid) return;
-
       const idx = currentMonthIndex();
       const k   = String(idx);
       if (!S.data[k]) S.data[k] = { income: 0, savings: 0, expenses: [] };
