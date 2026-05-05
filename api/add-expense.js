@@ -2,17 +2,27 @@ import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { randomUUID } from 'crypto';
 
-if (!getApps().length) {
-  initializeApp({
-    credential: cert({
-      projectId:   process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey:  (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
-    }),
-  });
+let _db = null;
+
+function getDb() {
+  if (_db) return _db;
+  const { FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY } = process.env;
+  if (!FIREBASE_PROJECT_ID || !FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY) {
+    throw new Error('Firebase Admin env vars missing');
+  }
+  if (!getApps().length) {
+    initializeApp({
+      credential: cert({
+        projectId:   FIREBASE_PROJECT_ID,
+        clientEmail: FIREBASE_CLIENT_EMAIL,
+        privateKey:  FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      }),
+    });
+  }
+  _db = getFirestore();
+  return _db;
 }
 
-const db = getFirestore();
 const VALID_CURRENCIES = new Set(['ARS', 'USD']);
 
 export default async function handler(req, res) {
@@ -43,6 +53,13 @@ export default async function handler(req, res) {
   }
   if (!category || typeof category !== 'string') {
     return res.status(400).json({ error: 'category es requerida' });
+  }
+
+  let db;
+  try {
+    db = getDb();
+  } catch {
+    return res.status(503).json({ error: 'Firebase Admin SDK no configurado — falta env vars' });
   }
 
   const id = randomUUID();
