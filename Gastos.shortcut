@@ -49,7 +49,7 @@
 			</dict>
 		</dict>
 
-		<!-- 3. Currency list -->
+		<!-- 3. Choose currency -->
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.list</string>
@@ -88,8 +88,6 @@
 				</array>
 			</dict>
 		</dict>
-
-		<!-- Choose from list: currency -->
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.choosefromlist</string>
@@ -109,7 +107,7 @@
 			</dict>
 		</dict>
 
-		<!-- 4. Category list -->
+		<!-- 4. Choose category (plain text, no emoji) -->
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.list</string>
@@ -125,7 +123,7 @@
 							<key>Value</key>
 							<dict>
 								<key>string</key>
-								<string>🍔 Alimentación</string>
+								<string>Alimentación</string>
 							</dict>
 							<key>WFSerializationType</key>
 							<string>WFTextTokenString</string>
@@ -139,7 +137,7 @@
 							<key>Value</key>
 							<dict>
 								<key>string</key>
-								<string>🚗 Transporte</string>
+								<string>Transporte</string>
 							</dict>
 							<key>WFSerializationType</key>
 							<string>WFTextTokenString</string>
@@ -153,7 +151,7 @@
 							<key>Value</key>
 							<dict>
 								<key>string</key>
-								<string>🏠 Vivienda</string>
+								<string>Vivienda</string>
 							</dict>
 							<key>WFSerializationType</key>
 							<string>WFTextTokenString</string>
@@ -167,7 +165,7 @@
 							<key>Value</key>
 							<dict>
 								<key>string</key>
-								<string>💊 Salud</string>
+								<string>Salud</string>
 							</dict>
 							<key>WFSerializationType</key>
 							<string>WFTextTokenString</string>
@@ -181,7 +179,7 @@
 							<key>Value</key>
 							<dict>
 								<key>string</key>
-								<string>🎮 Entretenimiento</string>
+								<string>Entretenimiento</string>
 							</dict>
 							<key>WFSerializationType</key>
 							<string>WFTextTokenString</string>
@@ -195,7 +193,7 @@
 							<key>Value</key>
 							<dict>
 								<key>string</key>
-								<string>💡 Servicios</string>
+								<string>Servicios</string>
 							</dict>
 							<key>WFSerializationType</key>
 							<string>WFTextTokenString</string>
@@ -209,7 +207,7 @@
 							<key>Value</key>
 							<dict>
 								<key>string</key>
-								<string>📚 Educación</string>
+								<string>Educación</string>
 							</dict>
 							<key>WFSerializationType</key>
 							<string>WFTextTokenString</string>
@@ -223,7 +221,7 @@
 							<key>Value</key>
 							<dict>
 								<key>string</key>
-								<string>👕 Ropa</string>
+								<string>Ropa</string>
 							</dict>
 							<key>WFSerializationType</key>
 							<string>WFTextTokenString</string>
@@ -237,7 +235,7 @@
 							<key>Value</key>
 							<dict>
 								<key>string</key>
-								<string>💻 Tecnología</string>
+								<string>Tecnología</string>
 							</dict>
 							<key>WFSerializationType</key>
 							<string>WFTextTokenString</string>
@@ -251,7 +249,7 @@
 							<key>Value</key>
 							<dict>
 								<key>string</key>
-								<string>📌 Otro</string>
+								<string>Otro</string>
 							</dict>
 							<key>WFSerializationType</key>
 							<string>WFTextTokenString</string>
@@ -260,8 +258,6 @@
 				</array>
 			</dict>
 		</dict>
-
-		<!-- Choose from list: category -->
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.choosefromlist</string>
@@ -277,341 +273,63 @@
 			<key>WFWorkflowActionParameters</key>
 			<dict>
 				<key>WFVariableName</key>
-				<string>CategoriaRaw</string>
-			</dict>
-		</dict>
-
-		<!-- Strip emoji prefix: get text after first space -->
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.gettext</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFTextActionText</key>
-				<dict>
-					<key>Value</key>
-					<dict>
-						<key>attachmentsByRange</key>
-						<dict>
-							<key>{0, 1}</key>
-							<dict>
-								<key>Type</key>
-								<string>Variable</string>
-								<key>VariableName</key>
-								<string>CategoriaRaw</string>
-							</dict>
-						</dict>
-						<key>string</key>
-						<string>&#xFFFC;</string>
-					</dict>
-					<key>WFSerializationType</key>
-					<string>WFTextTokenString</string>
-				</dict>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.text.replace</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFReplaceTextFind</key>
-				<string>🍔 </string>
-				<key>WFReplaceTextReplace</key>
-				<string></string>
-				<key>WFReplaceTextRegularExpression</key>
-				<false/>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.text.replace</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFReplaceTextFind</key>
-				<string>🚗 </string>
-				<key>WFReplaceTextReplace</key>
-				<string></string>
-				<key>WFReplaceTextRegularExpression</key>
-				<false/>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.text.replace</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFReplaceTextFind</key>
-				<string>🏠 </string>
-				<key>WFReplaceTextReplace</key>
-				<string></string>
-				<key>WFReplaceTextRegularExpression</key>
-				<false/>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.text.replace</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFReplaceTextFind</key>
-				<string>💊 </string>
-				<key>WFReplaceTextReplace</key>
-				<string></string>
-				<key>WFReplaceTextRegularExpression</key>
-				<false/>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.text.replace</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFReplaceTextFind</key>
-				<string>🎮 </string>
-				<key>WFReplaceTextReplace</key>
-				<string></string>
-				<key>WFReplaceTextRegularExpression</key>
-				<false/>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.text.replace</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFReplaceTextFind</key>
-				<string>💡 </string>
-				<key>WFReplaceTextReplace</key>
-				<string></string>
-				<key>WFReplaceTextRegularExpression</key>
-				<false/>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.text.replace</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFReplaceTextFind</key>
-				<string>📚 </string>
-				<key>WFReplaceTextReplace</key>
-				<string></string>
-				<key>WFReplaceTextRegularExpression</key>
-				<false/>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.text.replace</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFReplaceTextFind</key>
-				<string>👕 </string>
-				<key>WFReplaceTextReplace</key>
-				<string></string>
-				<key>WFReplaceTextRegularExpression</key>
-				<false/>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.text.replace</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFReplaceTextFind</key>
-				<string>💻 </string>
-				<key>WFReplaceTextReplace</key>
-				<string></string>
-				<key>WFReplaceTextRegularExpression</key>
-				<false/>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.text.replace</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFReplaceTextFind</key>
-				<string>📌 </string>
-				<key>WFReplaceTextReplace</key>
-				<string></string>
-				<key>WFReplaceTextRegularExpression</key>
-				<false/>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.setvariable</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFVariableName</key>
 				<string>Categoria</string>
 			</dict>
 		</dict>
 
-		<!-- 5. POST to API -->
+		<!-- 5. GET request with query params (simpler and more reliable than JSON body) -->
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.downloadurl</string>
 			<key>WFWorkflowActionParameters</key>
 			<dict>
 				<key>WFHTTPMethod</key>
-				<string>POST</string>
+				<string>GET</string>
 				<key>WFURL</key>
-				<string>https://gestor-three.vercel.app/api/add</string>
-				<key>WFHTTPBodyType</key>
-				<string>JSON</string>
-				<key>WFHTTPBody</key>
 				<dict>
 					<key>Value</key>
 					<dict>
-						<key>WFDictionaryFieldValueItems</key>
-						<array>
+						<key>attachmentsByRange</key>
+						<dict>
+							<key>{46, 1}</key>
 							<dict>
-								<key>WFItemType</key>
-								<integer>0</integer>
-								<key>WFKey</key>
-								<dict>
-									<key>Value</key>
-									<dict>
-										<key>string</key>
-										<string>name</string>
-									</dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
-								<key>WFValue</key>
-								<dict>
-									<key>Value</key>
-									<dict>
-										<key>attachmentsByRange</key>
-										<dict>
-											<key>{0, 1}</key>
-											<dict>
-												<key>Type</key>
-												<string>Variable</string>
-												<key>VariableName</key>
-												<string>Nombre</string>
-											</dict>
-										</dict>
-										<key>string</key>
-										<string>&#xFFFC;</string>
-									</dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
+								<key>Type</key>
+								<string>Variable</string>
+								<key>VariableName</key>
+								<string>Nombre</string>
 							</dict>
+							<key>{55, 1}</key>
 							<dict>
-								<key>WFItemType</key>
-								<integer>0</integer>
-								<key>WFKey</key>
-								<dict>
-									<key>Value</key>
-									<dict>
-										<key>string</key>
-										<string>amount</string>
-									</dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
-								<key>WFValue</key>
-								<dict>
-									<key>Value</key>
-									<dict>
-										<key>attachmentsByRange</key>
-										<dict>
-											<key>{0, 1}</key>
-											<dict>
-												<key>Type</key>
-												<string>Variable</string>
-												<key>VariableName</key>
-												<string>Monto</string>
-											</dict>
-										</dict>
-										<key>string</key>
-										<string>&#xFFFC;</string>
-									</dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
+								<key>Type</key>
+								<string>Variable</string>
+								<key>VariableName</key>
+								<string>Monto</string>
 							</dict>
+							<key>{65, 1}</key>
 							<dict>
-								<key>WFItemType</key>
-								<integer>0</integer>
-								<key>WFKey</key>
-								<dict>
-									<key>Value</key>
-									<dict>
-										<key>string</key>
-										<string>currency</string>
-									</dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
-								<key>WFValue</key>
-								<dict>
-									<key>Value</key>
-									<dict>
-										<key>attachmentsByRange</key>
-										<dict>
-											<key>{0, 1}</key>
-											<dict>
-												<key>Type</key>
-												<string>Variable</string>
-												<key>VariableName</key>
-												<string>Moneda</string>
-											</dict>
-										</dict>
-										<key>string</key>
-										<string>&#xFFFC;</string>
-									</dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
+								<key>Type</key>
+								<string>Variable</string>
+								<key>VariableName</key>
+								<string>Moneda</string>
 							</dict>
+							<key>{75, 1}</key>
 							<dict>
-								<key>WFItemType</key>
-								<integer>0</integer>
-								<key>WFKey</key>
-								<dict>
-									<key>Value</key>
-									<dict>
-										<key>string</key>
-										<string>category</string>
-									</dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
-								<key>WFValue</key>
-								<dict>
-									<key>Value</key>
-									<dict>
-										<key>attachmentsByRange</key>
-										<dict>
-											<key>{0, 1}</key>
-											<dict>
-												<key>Type</key>
-												<string>Variable</string>
-												<key>VariableName</key>
-												<string>Categoria</string>
-											</dict>
-										</dict>
-										<key>string</key>
-										<string>&#xFFFC;</string>
-									</dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
+								<key>Type</key>
+								<string>Variable</string>
+								<key>VariableName</key>
+								<string>Categoria</string>
 							</dict>
-						</array>
+						</dict>
+						<key>string</key>
+						<string>https://gestor-three.vercel.app/api/add?name=&#xFFFC;&amp;amount=&#xFFFC;&amp;currency=&#xFFFC;&amp;category=&#xFFFC;</string>
 					</dict>
 					<key>WFSerializationType</key>
-					<string>WFDictionaryFieldValue</string>
+					<string>WFTextTokenString</string>
 				</dict>
 			</dict>
 		</dict>
 
-		<!-- 6. Notification -->
+		<!-- 6. Show notification -->
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.notification</string>
