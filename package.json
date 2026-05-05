@@ -2,8 +2,7 @@
   "name": "gestor",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
-  "dependencies": {
+"dependencies": {
     "firebase-admin": "^12.0.0"
   }
 }

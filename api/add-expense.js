@@ -1,6 +1,6 @@
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
-import { randomUUID } from 'crypto';
+const { cert, getApps, initializeApp } = require('firebase-admin/app');
+const { FieldValue, getFirestore }     = require('firebase-admin/firestore');
+const { randomUUID }                   = require('crypto');
 
 let _db = null;
 
@@ -25,7 +25,7 @@ function getDb() {
 
 const VALID_CURRENCIES = new Set(['ARS', 'USD']);
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
   try {
     db = getDb();
   } catch {
-    return res.status(503).json({ error: 'Firebase Admin SDK no configurado — falta env vars' });
+    return res.status(503).json({ error: 'Firebase Admin SDK no configurado — faltan env vars' });
   }
 
   const id = randomUUID();
@@ -81,4 +81,4 @@ export default async function handler(req, res) {
     ok:      true,
     message: `Gasto guardado: ${name.trim()} · ${label} ${currency}`,
   });
-}
+};
