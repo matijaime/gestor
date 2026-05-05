@@ -5,7 +5,105 @@
 	<key>WFWorkflowActions</key>
 	<array>
 
-		<!-- 1. Nombre -->
+		<!-- 1. Elegir moneda -->
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.choosefromlist</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFChooseFromListActionPrompt</key>
+				<string>Moneda</string>
+				<key>WFChooseFromListActionItems</key>
+				<array>
+					<string>ARS</string>
+					<string>USD</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.setvariable</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFVariableName</key>
+				<string>Moneda</string>
+			</dict>
+		</dict>
+
+		<!-- 2. Elegir categoria -->
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.choosefromlist</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFChooseFromListActionPrompt</key>
+				<string>Categor&#xED;a</string>
+				<key>WFChooseFromListActionItems</key>
+				<array>
+					<string>Alimentaci&#xF3;n</string>
+					<string>Transporte</string>
+					<string>Vivienda</string>
+					<string>Salud</string>
+					<string>Entretenimiento</string>
+					<string>Servicios</string>
+					<string>Educaci&#xF3;n</string>
+					<string>Ropa</string>
+					<string>Tecnolog&#xED;a</string>
+					<string>Otro</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.setvariable</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFVariableName</key>
+				<string>Categoria</string>
+			</dict>
+		</dict>
+
+		<!-- 3. URL-encode categoria -->
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.urlencode</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFEncodeMode</key>
+				<string>Encode</string>
+				<key>WFInput</key>
+				<dict>
+					<key>Value</key>
+					<dict>
+						<key>attachmentsByRange</key>
+						<dict>
+							<key>{0, 1}</key>
+							<dict>
+								<key>Type</key>
+								<string>Variable</string>
+								<key>VariableName</key>
+								<string>Categoria</string>
+							</dict>
+						</dict>
+						<key>string</key>
+						<string>&#xFFFC;</string>
+					</dict>
+					<key>WFSerializationType</key>
+					<string>WFTextTokenString</string>
+				</dict>
+			</dict>
+		</dict>
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.setvariable</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFVariableName</key>
+				<string>CategoriaEnc</string>
+			</dict>
+		</dict>
+
+		<!-- 4. Preguntar nombre -->
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.ask</string>
@@ -27,14 +125,54 @@
 			</dict>
 		</dict>
 
-		<!-- 2. Monto -->
+		<!-- 5. URL-encode nombre -->
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.urlencode</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFEncodeMode</key>
+				<string>Encode</string>
+				<key>WFInput</key>
+				<dict>
+					<key>Value</key>
+					<dict>
+						<key>attachmentsByRange</key>
+						<dict>
+							<key>{0, 1}</key>
+							<dict>
+								<key>Type</key>
+								<string>Variable</string>
+								<key>VariableName</key>
+								<string>Nombre</string>
+							</dict>
+						</dict>
+						<key>string</key>
+						<string>&#xFFFC;</string>
+					</dict>
+					<key>WFSerializationType</key>
+					<string>WFTextTokenString</string>
+				</dict>
+			</dict>
+		</dict>
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.setvariable</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFVariableName</key>
+				<string>NombreEnc</string>
+			</dict>
+		</dict>
+
+		<!-- 6. Preguntar monto -->
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.ask</string>
 			<key>WFWorkflowActionParameters</key>
 			<dict>
 				<key>WFAskActionPrompt</key>
-				<string>&#xBF;Cu&#xE1;nto? (solo n&#xFA;mero)</string>
+				<string>Monto (solo n&#xFA;mero)</string>
 				<key>WFInputType</key>
 				<string>Number</string>
 			</dict>
@@ -49,264 +187,66 @@
 			</dict>
 		</dict>
 
-		<!-- 3. Moneda -->
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.ask</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFAskActionPrompt</key>
-				<string>Moneda: ARS o USD</string>
-				<key>WFInputType</key>
-				<string>Text</string>
-				<key>WFAskActionDefaultAnswer</key>
-				<string>ARS</string>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.setvariable</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFVariableName</key>
-				<string>Moneda</string>
-			</dict>
-		</dict>
-
-		<!-- 4. Categoría -->
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.ask</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFAskActionPrompt</key>
-				<string>Categor&#xED;a: Alimentaci&#xF3;n / Transporte / Vivienda / Salud / Entretenimiento / Servicios / Educaci&#xF3;n / Ropa / Tecnolog&#xED;a / Otro</string>
-				<key>WFInputType</key>
-				<string>Text</string>
-				<key>WFAskActionDefaultAnswer</key>
-				<string>Otro</string>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.setvariable</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFVariableName</key>
-				<string>Categoria</string>
-			</dict>
-		</dict>
-
-		<!-- 5. POST con JSON body nativo (soluciona el problema de octet-stream) -->
+		<!-- 7. GET con todos los params en la URL -->
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.downloadurl</string>
 			<key>WFWorkflowActionParameters</key>
 			<dict>
 				<key>WFHTTPMethod</key>
-				<string>POST</string>
+				<string>GET</string>
 				<key>WFURL</key>
-				<string>https://gestor-three.vercel.app/api/add-expense</string>
-				<key>WFHTTPBodyType</key>
-				<string>JSON</string>
-				<key>WFHTTPBody</key>
 				<dict>
 					<key>Value</key>
 					<dict>
-						<key>WFDictionaryFieldValueItems</key>
-						<array>
-							<!-- name -->
+						<key>attachmentsByRange</key>
+						<dict>
+							<key>{96, 1}</key>
 							<dict>
-								<key>WFItemType</key>
-								<integer>0</integer>
-								<key>WFKey</key>
-								<dict>
-									<key>Value</key>
-									<dict><key>string</key><string>name</string></dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
-								<key>WFValue</key>
-								<dict>
-									<key>Value</key>
-									<dict>
-										<key>attachmentsByRange</key>
-										<dict>
-											<key>{0, 1}</key>
-											<dict>
-												<key>Type</key>
-												<string>Variable</string>
-												<key>VariableName</key>
-												<string>Nombre</string>
-											</dict>
-										</dict>
-										<key>string</key>
-										<string>&#xFFFC;</string>
-									</dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
+								<key>Type</key>
+								<string>Variable</string>
+								<key>VariableName</key>
+								<string>NombreEnc</string>
 							</dict>
-							<!-- amount -->
+							<key>{105, 1}</key>
 							<dict>
-								<key>WFItemType</key>
-								<integer>0</integer>
-								<key>WFKey</key>
-								<dict>
-									<key>Value</key>
-									<dict><key>string</key><string>amount</string></dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
-								<key>WFValue</key>
-								<dict>
-									<key>Value</key>
-									<dict>
-										<key>attachmentsByRange</key>
-										<dict>
-											<key>{0, 1}</key>
-											<dict>
-												<key>Type</key>
-												<string>Variable</string>
-												<key>VariableName</key>
-												<string>Monto</string>
-											</dict>
-										</dict>
-										<key>string</key>
-										<string>&#xFFFC;</string>
-									</dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
+								<key>Type</key>
+								<string>Variable</string>
+								<key>VariableName</key>
+								<string>Monto</string>
 							</dict>
-							<!-- currency -->
+							<key>{116, 1}</key>
 							<dict>
-								<key>WFItemType</key>
-								<integer>0</integer>
-								<key>WFKey</key>
-								<dict>
-									<key>Value</key>
-									<dict><key>string</key><string>currency</string></dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
-								<key>WFValue</key>
-								<dict>
-									<key>Value</key>
-									<dict>
-										<key>attachmentsByRange</key>
-										<dict>
-											<key>{0, 1}</key>
-											<dict>
-												<key>Type</key>
-												<string>Variable</string>
-												<key>VariableName</key>
-												<string>Moneda</string>
-											</dict>
-										</dict>
-										<key>string</key>
-										<string>&#xFFFC;</string>
-									</dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
+								<key>Type</key>
+								<string>Variable</string>
+								<key>VariableName</key>
+								<string>Moneda</string>
 							</dict>
-							<!-- category -->
+							<key>{127, 1}</key>
 							<dict>
-								<key>WFItemType</key>
-								<integer>0</integer>
-								<key>WFKey</key>
-								<dict>
-									<key>Value</key>
-									<dict><key>string</key><string>category</string></dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
-								<key>WFValue</key>
-								<dict>
-									<key>Value</key>
-									<dict>
-										<key>attachmentsByRange</key>
-										<dict>
-											<key>{0, 1}</key>
-											<dict>
-												<key>Type</key>
-												<string>Variable</string>
-												<key>VariableName</key>
-												<string>Categoria</string>
-											</dict>
-										</dict>
-										<key>string</key>
-										<string>&#xFFFC;</string>
-									</dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
+								<key>Type</key>
+								<string>Variable</string>
+								<key>VariableName</key>
+								<string>CategoriaEnc</string>
 							</dict>
-							<!-- note (vacío) -->
-							<dict>
-								<key>WFItemType</key>
-								<integer>0</integer>
-								<key>WFKey</key>
-								<dict>
-									<key>Value</key>
-									<dict><key>string</key><string>note</string></dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
-								<key>WFValue</key>
-								<dict>
-									<key>Value</key>
-									<dict><key>string</key><string></string></dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
-							</dict>
-						</array>
+						</dict>
+						<key>string</key>
+						<string>https://gestor-three.vercel.app/api/add-expense?token=gst_d4db7e3489c5e82b8286d8e9de94af29&amp;name=&#xFFFC;&amp;amount=&#xFFFC;&amp;currency=&#xFFFC;&amp;category=&#xFFFC;</string>
 					</dict>
 					<key>WFSerializationType</key>
-					<string>WFDictionaryFieldValue</string>
-				</dict>
-				<key>WFHTTPHeaders</key>
-				<dict>
-					<key>Value</key>
-					<dict>
-						<key>WFDictionaryFieldValueItems</key>
-						<array>
-							<dict>
-								<key>WFItemType</key>
-								<integer>0</integer>
-								<key>WFKey</key>
-								<dict>
-									<key>Value</key>
-									<dict><key>string</key><string>Authorization</string></dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
-								<key>WFValue</key>
-								<dict>
-									<key>Value</key>
-									<dict><key>string</key><string>Bearer gst_d4db7e3489c5e82b8286d8e9de94af29</string></dict>
-									<key>WFSerializationType</key>
-									<string>WFTextTokenString</string>
-								</dict>
-							</dict>
-						</array>
-					</dict>
-					<key>WFSerializationType</key>
-					<string>WFDictionaryFieldValue</string>
+					<string>WFTextTokenString</string>
 				</dict>
 			</dict>
 		</dict>
 
-		<!-- 6. Notificación -->
+		<!-- 8. Notificacion -->
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.notification</string>
 			<key>WFWorkflowActionParameters</key>
 			<dict>
 				<key>WFNotificationActionTitle</key>
-				<string>&#x2705; Guardado en Gestor</string>
+				<string>&#x2705; Gasto guardado</string>
 				<key>WFNotificationActionBody</key>
 				<dict>
 					<key>Value</key>

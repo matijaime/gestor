@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atajo iPhone · Gestor</title>
+  <meta name="theme-color" content="#07071a" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #07071a;
+      --surface: #111128;
+      --border:  rgba(255,255,255,0.08);
+      --ink-1:   #ffffff;
+      --ink-2:   rgba(255,255,255,0.55);
+      --ink-3:   rgba(255,255,255,0.35);
+      --accent:  #7c3aed;
+      --accent-2:#a78bfa;
+      --radius:  16px;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--ink-1);
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100dvh;
+    }
+
+    body {
+      padding: 32px 20px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      display: grid;
+      place-items: center;
+      font-size: 32px;
+      box-shadow: 0 12px 30px rgba(124,58,237,0.35);
+    }
+
+    h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; }
+    .subtitle { font-size: 14px; color: var(--ink-2); max-width: 360px; line-height: 1.5; }
+
+    .download-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 18px 24px;
+      background: var(--ink-1);
+      border: none;
+      border-radius: var(--radius);
+      color: #07071a;
+      font: 700 16px 'DM Sans', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s;
+    }
+    .download-btn:active { transform: scale(0.98); }
+    .download-btn .arrow { font-size: 18px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+
+    .card h2 {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-2);
+      margin-bottom: 14px;
+    }
+
+    .steps {
+      list-style: none;
+      counter-reset: step;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .steps li {
+      counter-increment: step;
+      padding-left: 38px;
+      position: relative;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--ink-1);
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0; top: 0;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: rgba(124,58,237,0.2);
+      color: var(--accent-2);
+      font-weight: 700;
+      font-size: 13px;
+      display: grid;
+      place-items: center;
+    }
+    .steps b { color: var(--accent-2); font-weight: 600; }
+
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .flow-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    .flow-step .num {
+      flex: none;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-size: 11px; font-weight: 700;
+      display: grid; place-items: center;
+    }
+
+    .note {
+      font-size: 13px;
+      color: var(--ink-3);
+      line-height: 1.5;
+      text-align: center;
+      padding: 0 8px;
+    }
+    .note a { color: var(--accent-2); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="header">
+      <div class="icon">📲</div>
+      <h1>Atajo de Gastos</h1>
+      <p class="subtitle">Cargá un gasto en 4 toques desde tu iPhone — moneda, categoría, nombre y monto. Se sube automáticamente al Gestor.</p>
+    </div>
+
+    <a href="/Gastos.shortcut" class="download-btn" download="Gastos.shortcut">
+      <span class="arrow">⬇</span> Descargar atajo
+    </a>
+
+    <div class="card">
+      <h2>Qué hace el atajo</h2>
+      <div class="flow">
+        <div class="flow-step"><span class="num">1</span> Elegís moneda (ARS o USD)</div>
+        <div class="flow-step"><span class="num">2</span> Elegís categoría (10 opciones)</div>
+        <div class="flow-step"><span class="num">3</span> Escribís el nombre del gasto</div>
+        <div class="flow-step"><span class="num">4</span> Escribís el monto</div>
+        <div class="flow-step"><span class="num">5</span> Se sube y aparece notificación ✅</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Instalación en iPhone</h2>
+      <ol class="steps">
+        <li>Tocá <b>Descargar atajo</b> arriba desde tu iPhone (Safari).</li>
+        <li>Cuando se descargue, abrí el archivo. Se abre la app <b>Atajos</b>.</li>
+        <li>Tocá <b>Añadir Atajo</b>. Aparecerá <b>"Gastos"</b> en tu librería.</li>
+        <li>Si te pregunta por permisos, dale <b>Permitir siempre</b> al acceso a internet.</li>
+        <li>Para uso rápido: <b>mantené pulsado</b> el atajo y elegí <b>Añadir a pantalla de inicio</b>.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>Si no se abre directamente</h2>
+      <ol class="steps">
+        <li>iOS pide permiso para atajos no firmados. Andá a <b>Ajustes → Atajos</b>.</li>
+        <li>Activá <b>"Permitir Atajos no fiables"</b>.</li>
+        <li>Tenés que ejecutar al menos un atajo cualquiera antes para que aparezca esa opción.</li>
+        <li>Volvé a esta página y descargá el atajo.</li>
+      </ol>
+    </div>
+
+    <p class="note">
+      Los gastos se guardan en una cola y la app principal los importa automáticamente cuando la abrís (o cada 20 segundos si la tenés abierta). Volvé al <a href="/">Gestor</a>.
+    </p>
+  </div>
+</body>
+</html>
