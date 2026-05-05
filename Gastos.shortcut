@@ -437,14 +437,14 @@
 			</dict>
 		</dict>
 
-		<!-- 7. Notificación con respuesta -->
+		<!-- 7. Notificación con respuesta del servidor -->
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.notification</string>
 			<key>WFWorkflowActionParameters</key>
 			<dict>
 				<key>WFNotificationActionTitle</key>
-				<string>Gestor</string>
+				<string>Servidor respondio:</string>
 				<key>WFNotificationActionBody</key>
 				<dict>
 					<key>Value</key>
@@ -456,33 +456,11 @@
 								<key>Type</key>
 								<string>Variable</string>
 								<key>VariableName</key>
-								<string>Nombre</string>
-							</dict>
-							<key>{4, 1}</key>
-							<dict>
-								<key>Type</key>
-								<string>Variable</string>
-								<key>VariableName</key>
-								<string>Monto</string>
-							</dict>
-							<key>{6, 1}</key>
-							<dict>
-								<key>Type</key>
-								<string>Variable</string>
-								<key>VariableName</key>
-								<string>Moneda</string>
-							</dict>
-							<key>{10, 1}</key>
-							<dict>
-								<key>Type</key>
-								<string>Variable</string>
-								<key>VariableName</key>
 								<string>Respuesta</string>
 							</dict>
 						</dict>
 						<key>string</key>
-						<string>&#xFFFC; &#xB7; &#xFFFC; &#xFFFC;
-&#xFFFC;</string>
+						<string>&#xFFFC;</string>
 					</dict>
 					<key>WFSerializationType</key>
 					<string>WFTextTokenString</string>
