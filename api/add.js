@@ -6,6 +6,7 @@ export default async function handler(req, res) {
   const name     = q.name     || b.name;
   const amount   = q.amount   || b.amount;
   const currency = q.currency || b.currency || 'ARS';
+  const category = q.category || b.category || 'Otro';
 
   if (!name || !amount) {
     return res.status(400).json({ error: 'Faltan parámetros: name, amount' });
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
       name:     { stringValue: String(name) },
       amount:   { doubleValue: parseFloat(amount) },
       currency: { stringValue: String(currency) },
-      category: { stringValue: 'Otro' },
+      category: { stringValue: String(category) },
     }
   };
 
