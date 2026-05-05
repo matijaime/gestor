@@ -27,19 +27,34 @@ const VALID_CURRENCIES = new Set(['ARS', 'USD']);
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST' && req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-  const auth  = (req.headers['authorization'] || '').trim();
-  const token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+  // GET: token in query param — POST: Bearer token in header
+  let token = '';
+  if (req.method === 'GET') {
+    token = (req.query.token || '').trim();
+  } else {
+    const auth = (req.headers['authorization'] || '').trim();
+    token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+  }
   if (!process.env.SHORTCUT_TOKEN || token !== process.env.SHORTCUT_TOKEN) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const { name, amount, currency = 'ARS', category = 'Otro', note = '' } = req.body || {};
+  // Accept params from query string (GET) or body (POST)
+  const q = req.query;
+  const b = req.body || {};
+  const name     = q.name     || b.name;
+  const amount   = q.amount   || b.amount;
+  const currency = q.currency || b.currency || 'ARS';
+  const category = q.category || b.category || 'Otro';
+  const note     = q.note     || b.note     || '';
 
   if (!name || typeof name !== 'string' || !name.trim()) {
     return res.status(400).json({ error: 'name es requerido' });
