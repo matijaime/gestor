@@ -343,6 +343,7 @@
     }
 
     // ── Save expense ──
+    // Escribe en la colección "quick_expenses" para que el gestor lo importe
     async function saveExpense() {
       const name   = document.getElementById('fName').value.trim();
       const amount = parseFloat(document.getElementById('fAmount').value);
@@ -357,25 +358,17 @@
 
       try {
         const idx = currentMonthIdx();
-        const k   = String(idx);
 
-        // Load latest state from Firestore
-        const doc = await db.collection('users').doc(currentUser.uid).get();
-        S = doc.exists ? doc.data() : { blue: 1180, blueUpdated: null, yearView: 2026, monthIdx: 0, data: {} };
-        if (!S.data)    S.data    = {};
-        if (!S.data[k]) S.data[k] = { income: 0, savings: 0, expenses: [] };
-
-        const expense = {
-          id:       Date.now().toString(36) + Math.random().toString(36).slice(2),
+        // ✅ Escribe en quick_expenses (NO en el doc del usuario)
+        // El gestor (importPendingExpenses) lee de aquí, importa y borra.
+        await db.collection('quick_expenses').add({
           name,
           amount,
           currency: curr,
-          cat:      selectedCat,
-          paid:     false,
-        };
-
-        S.data[k].expenses.push(expense);
-        await db.collection('users').doc(currentUser.uid).set(S);
+          category: selectedCat,  // ✅ campo que espera importPendingExpenses()
+          note:     '',
+          addedAt:  firebase.firestore.FieldValue.serverTimestamp(),
+        });
 
         const month = MONTHS[idx];
         const label = curr === 'ARS'
