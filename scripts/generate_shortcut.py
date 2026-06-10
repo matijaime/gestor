@@ -1,197 +1,168 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-Genera el archivo AgregarGasto.shortcut para importar en iPhone/iPad.
-Uso: python generate_shortcut.py
-Salida: AgregarGasto.shortcut (en el mismo directorio)
+Genera AgregarGasto.shortcut - Shortcut funcional para iPhone.
+Creado con todos los valores configurados (sin pedir URL ni API key).
+
+Uso: python scripts/generate_shortcut.py
 """
 
 import plistlib
 import pathlib
+import os
 
-# ── Helpers para tokens de texto ──────────────────────────────────────────────
+API_URL = os.getenv("VERCEL_URL", "https://gestor-pearl.vercel.app")
+API_KEY = "gestor-api-key-2024-secure-dev"
 
-def text_token_string(text: str) -> dict:
-    """Texto plano sin variables."""
+# --- helpers ------------------------------------------------------------------
+
+def plain(text):
     return {
         "Value": {"attachmentsByRange": {}, "string": text},
         "WFSerializationType": "WFTextTokenString",
     }
 
 
-def text_token_var(var_name: str) -> dict:
-    """Referencia a una variable como token de texto."""
+def var_ref(name):
     return {
         "Value": {
             "attachmentsByRange": {
                 "{0, 1}": {
                     "Aggrandizements": [],
                     "Type": "Variable",
-                    "VariableName": var_name,
+                    "VariableName": name,
                 }
             },
-            "string": "￼",
+            "string": "﻿",
         },
         "WFSerializationType": "WFTextTokenString",
     }
 
 
-def dict_text_item(key: str, var_name: str) -> dict:
-    """Ítem de diccionario tipo texto que apunta a una variable."""
-    return {
-        "WFItemType": 0,
-        "WFKey": text_token_string(key),
-        "WFValue": text_token_var(var_name),
-    }
+def dict_item_var(key, var_name):
+    return {"WFItemType": 0, "WFKey": plain(key), "WFValue": var_ref(var_name)}
 
 
-def dict_literal_item(key: str, value: str) -> dict:
-    """Ítem de diccionario tipo texto con valor literal."""
-    return {
-        "WFItemType": 0,
-        "WFKey": text_token_string(key),
-        "WFValue": text_token_string(value),
-    }
+def dict_item_plain(key, value):
+    return {"WFItemType": 0, "WFKey": plain(key), "WFValue": plain(value)}
 
 
-# ── Acciones del shortcut ──────────────────────────────────────────────────────
-
-def action(identifier: str, params: dict) -> dict:
+def act(identifier, params):
     return {
         "WFWorkflowActionIdentifier": identifier,
         "WFWorkflowActionParameters": params,
     }
 
 
+# --- categorias ---------------------------------------------------------------
+
 CATEGORIAS = [
     "🍔 Comida",
     "🚗 Transporte",
     "🏠 Casa",
-    "⚡ Servicios",
+    "🔧 Servicios",
     "🎬 Entretenimiento",
     "👕 Ropa",
     "💊 Salud",
-    "📚 Educación",
-    "💸 Otros",
+    "📚 Educacion",
+    "❓ Otros",
 ]
 
-actions_list = [
+# --- acciones -----------------------------------------------------------------
 
+actions = [
     # 1. Pedir monto
-    action("is.workflow.actions.ask", {
-        "WFAskActionPrompt": "💵 ¿Cuánto gastaste? (ARS)",
+    act("is.workflow.actions.ask", {
+        "WFAskActionPrompt": "Cuanto gastaste? (ARS)",
         "WFAskActionInputType": "Number",
         "WFAskActionDefaultAnswer": "",
         "CustomOutputName": "Monto",
     }),
 
-    # 2. Guardar en variable "monto"
-    action("is.workflow.actions.setvariable", {
+    # 2. Guardar monto
+    act("is.workflow.actions.setvariable", {
         "WFVariableName": "monto",
     }),
 
-    # 3. Pedir descripción
-    action("is.workflow.actions.ask", {
-        "WFAskActionPrompt": "📝 ¿Descripción? (opcional)",
+    # 3. Pedir descripcion
+    act("is.workflow.actions.ask", {
+        "WFAskActionPrompt": "En que gastaste? (opcional)",
         "WFAskActionInputType": "Text",
-        "WFAskActionDefaultAnswer": "",
+        "WFAskActionDefaultAnswer": "Sin descripcion",
         "CustomOutputName": "Descripcion",
     }),
 
-    # 4. Guardar en variable "descripcion"
-    action("is.workflow.actions.setvariable", {
+    # 4. Guardar descripcion
+    act("is.workflow.actions.setvariable", {
         "WFVariableName": "descripcion",
     }),
 
-    # 5. Lista de categorías
-    action("is.workflow.actions.list", {
+    # 5. Lista de categorias
+    act("is.workflow.actions.list", {
         "WFItems": CATEGORIAS,
         "CustomOutputName": "Lista categorias",
     }),
 
-    # 6. Elegir categoría del menú
-    action("is.workflow.actions.choosefromlist", {
-        "WFChooseFromListActionPrompt": "📂 Elegí una categoría",
+    # 6. Elegir categoria
+    act("is.workflow.actions.choosefromlist", {
+        "WFChooseFromListActionPrompt": "Elige una categoria:",
         "WFChooseFromListActionSelectMultiple": False,
         "CustomOutputName": "Categoria",
     }),
 
-    # 7. Guardar categoría
-    action("is.workflow.actions.setvariable", {
+    # 7. Guardar categoria
+    act("is.workflow.actions.setvariable", {
         "WFVariableName": "categoria",
     }),
 
-    # 8. Construir diccionario con los datos del gasto
-    action("is.workflow.actions.dictionary", {
+    # 8. Construir body JSON
+    act("is.workflow.actions.dictionary", {
         "WFItems": {
             "Value": {
                 "WFDictionaryFieldValueItems": [
-                    dict_text_item("monto", "monto"),
-                    dict_text_item("descripcion", "descripcion"),
-                    dict_text_item("categoria", "categoria"),
+                    dict_item_var("monto",       "monto"),
+                    dict_item_var("descripcion", "descripcion"),
+                    dict_item_var("categoria",   "categoria"),
                 ]
             },
             "WFSerializationType": "WFDictionaryFieldValue",
         },
-        "CustomOutputName": "Datos del gasto",
+        "CustomOutputName": "Body",
     }),
 
-    # 9. POST a la API — URL y API key vienen de WFWorkflowImportQuestions
-    action("is.workflow.actions.downloadurl", {
+    # 9. Convertir diccionario a JSON
+    act("is.workflow.actions.getcontent", {
+        "WFInput": var_ref("Body"),
+        "WFContentItemValueType": "URLContentItem",
+        "CustomOutputName": "JSON",
+    }),
+
+    # 10. POST a la API
+    act("is.workflow.actions.downloadurl", {
         "WFHTTPMethod": "POST",
         "WFHTTPBodyType": "JSON",
-        "WFRequestVariable": {
-            "Value": {
-                "attachmentsByRange": {
-                    "{0, 1}": {
-                        "Aggrandizements": [],
-                        "Type": "Variable",
-                        "VariableName": "Datos del gasto",
-                    }
-                },
-                "string": "￼",
-            },
-            "WFSerializationType": "WFTextTokenString",
-        },
+        "WFURL": plain(API_URL + "/api/shortcuts/expense"),
+        "WFRequestVariable": var_ref("Body"),
         "WFHTTPHeaders": {
             "Value": {
                 "WFDictionaryFieldValueItems": [
-                    dict_literal_item("Content-Type", "application/json"),
-                    dict_literal_item("x-api-key", "REEMPLAZA_CON_TU_API_KEY"),
+                    dict_item_plain("Content-Type", "application/json"),
+                    dict_item_plain("x-api-key", API_KEY),
                 ]
             },
             "WFSerializationType": "WFDictionaryFieldValue",
         },
-        "WFURL": "https://REEMPLAZA_CON_TU_URL/api/shortcuts/expense",
-        "CustomOutputName": "Respuesta API",
+        "CustomOutputName": "Respuesta",
     }),
 
-    # 10. Obtener el campo "message" de la respuesta JSON
-    action("is.workflow.actions.getvalueforkey", {
-        "WFDictionaryKey": text_token_string("message"),
-        "WFInput": {
-            "Value": {
-                "attachmentsByRange": {
-                    "{0, 1}": {
-                        "Aggrandizements": [],
-                        "Type": "Variable",
-                        "VariableName": "Respuesta API",
-                    }
-                },
-                "string": "￼",
-            },
-            "WFSerializationType": "WFTextTokenString",
-        },
-        "CustomOutputName": "Mensaje resultado",
-    }),
-
-    # 11. Mostrar notificación con el resultado
-    action("is.workflow.actions.notification", {
-        "WFNotificationActionBody": text_token_var("Mensaje resultado"),
-        "WFNotificationActionTitle": "Gestor de Finanzas",
-        "WFNotificationActionSound": True,
+    # 11. Mostrar notificacion de exito
+    act("is.workflow.actions.alert", {
+        "WFAlertActionTitle": "✓ Gasto guardado",
+        "WFAlertActionMessage": "Tu gasto fue registrado correctamente",
     }),
 ]
 
-# ── Estructura completa del shortcut ──────────────────────────────────────────
+# --- shortcut completo --------------------------------------------------------
 
 shortcut = {
     "WFWorkflowClientVersion": "1240.0.0.0.0",
@@ -199,10 +170,10 @@ shortcut = {
     "WFWorkflowMinimumClientVersionString": "900",
     "WFWorkflowName": "Agregar Gasto",
     "WFWorkflowIcon": {
-        "WFWorkflowIconStartColor": 463140863,   # Verde
-        "WFWorkflowIconGlyphNumber": 59500,       # Billetera
+        "WFWorkflowIconStartColor": 463140863,
+        "WFWorkflowIconGlyphNumber": 59500,
     },
-    "WFWorkflowActions": actions_list,
+    "WFWorkflowActions": actions,
     "WFWorkflowImportQuestions": [],
     "WFWorkflowInputContentItemClasses": [],
     "WFWorkflowOutputContentItemClasses": [],
@@ -210,16 +181,15 @@ shortcut = {
     "WFQuickActionSurfaces": [],
 }
 
-# ── Escribir el archivo ────────────────────────────────────────────────────────
+# --- escribir -----------------------------------------------------------------
 
-output = pathlib.Path(__file__).parent.parent / "AgregarGasto.shortcut"
-with open(output, "wb") as f:
-    plistlib.dump(shortcut, f, fmt=plistlib.FMT_XML)
+root = pathlib.Path(__file__).parent.parent
+out = root / "AgregarGasto.shortcut"
 
-print(f"✅ Shortcut generado: {output}")
-print()
-print("📋 Próximos pasos:")
-print("  1. Copiá AgregarGasto.shortcut a tu iPhone (AirDrop, iCloud Drive, etc.)")
-print("  2. Abrilo desde la app Archivos → tap en el archivo → 'Agregar atajo'")
-print("  3. Abrí el atajo en Atajos → editalo → reemplazá la URL y API key en la acción 'Obtener contenido de URL'")
-print("  4. Listo: ejecutalo desde el widget o desde la app Atajos")
+with open(out, "wb") as f:
+    plistlib.dump(shortcut, f, fmt=plistlib.FMT_BINARY)
+
+print(f"OK: {out}")
+print(f"Acciones: {len(actions)}")
+print(f"URL: {API_URL}/api/shortcuts/expense")
+print(f"API Key: {API_KEY}")
