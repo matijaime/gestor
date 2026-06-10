@@ -19,26 +19,27 @@
 
 @layer components {
   .card {
-    @apply bg-zinc-900 border border-zinc-800 rounded-2xl p-5;
+    @apply bg-zinc-900 border border-zinc-800 rounded-2xl p-4 sm:p-5;
   }
 
   .btn-primary {
     @apply bg-green-600 hover:bg-green-500 active:bg-green-700 text-white font-semibold
-           px-4 py-2 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+           px-4 py-2.5 sm:py-2 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+           text-sm sm:text-base;
   }
 
   .btn-ghost {
     @apply bg-zinc-800 hover:bg-zinc-700 text-zinc-100 font-medium
-           px-4 py-2 rounded-xl transition-colors;
+           px-4 py-2.5 sm:py-2 rounded-xl transition-colors text-sm sm:text-base;
   }
 
   .input {
-    @apply w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-zinc-100
+    @apply w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3.5 py-2.5 sm:py-2 text-zinc-100 text-base sm:text-sm
            placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-green-600
            focus:border-transparent transition-all;
   }
 
   .label {
-    @apply block text-sm font-medium text-zinc-400 mb-1;
+    @apply block text-xs sm:text-sm font-medium text-zinc-400 mb-2 sm:mb-1;
   }
 }

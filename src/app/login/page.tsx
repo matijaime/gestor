@@ -23,21 +23,21 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8">
       <div className="card w-full max-w-sm text-center space-y-6">
         {/* Logo */}
         <div className="flex justify-center">
-          <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center text-3xl">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-600 rounded-2xl flex items-center justify-center text-4xl sm:text-5xl">
             💰
           </div>
         </div>
 
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">Gestor de Finanzas</h1>
-          <p className="text-zinc-400 mt-1 text-sm">Control personal de gastos en ARS</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100">Gestor de Finanzas</h1>
+          <p className="text-zinc-400 mt-1 text-sm sm:text-base">Control personal de gastos en ARS</p>
         </div>
 
-        <button onClick={handleLogin} className="btn-primary w-full flex items-center justify-center gap-3">
+        <button onClick={handleLogin} className="btn-primary w-full flex items-center justify-center gap-3 py-3 sm:py-2.5">
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
               fill="currentColor"

@@ -44,19 +44,20 @@ export function GastoForm({ onClose }: { onClose?: () => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
       <div>
         <label className="label">Monto (ARS)</label>
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">$</span>
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 text-lg">$</span>
           <input
             type="number"
+            inputMode="decimal"
             step="0.01"
             min="0"
             placeholder="0.00"
             value={monto}
             onChange={(e) => setMonto(e.target.value)}
-            className="input pl-7"
+            className="input pl-8"
             required
             autoFocus
           />

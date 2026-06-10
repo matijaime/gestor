@@ -30,7 +30,7 @@ export function ResumenCards({ gastos }: { gastos: Gasto[] }) {
     "$" + n.toLocaleString("es-AR", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
       <Card label="Este mes" value={fmt(totalMes)} sub={`${cantidadMes} gastos`} color="green" />
       <Card label="Esta semana" value={fmt(totalSemana)} color="blue" />
       <Card label="Hoy" value={fmt(totalHoy)} color="yellow" />

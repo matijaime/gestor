@@ -26,15 +26,15 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen max-w-lg mx-auto px-4 pb-20 pt-6">
+    <div className="min-h-screen max-w-5xl mx-auto px-4 sm:px-6 md:px-8 pb-20 pt-4 sm:pt-6">
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-2 text-zinc-400 hover:text-zinc-200 mb-6 transition-colors"
+        className="flex items-center gap-2 text-zinc-400 hover:text-zinc-200 mb-6 transition-colors text-sm sm:text-base"
       >
         <ArrowLeft size={18} /> Volver
       </button>
 
-      <h1 className="text-xl font-bold mb-6">Configuración</h1>
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">Configuración</h1>
 
       {/* Perfil */}
       <div className="card mb-4 space-y-3">

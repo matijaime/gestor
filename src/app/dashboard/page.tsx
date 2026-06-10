@@ -39,15 +39,15 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen max-w-lg mx-auto px-4 pb-20 pt-6">
+    <div className="min-h-screen max-w-5xl mx-auto px-4 sm:px-6 md:px-8 pb-20 pt-4 sm:pt-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-green-600 rounded-xl flex items-center justify-center text-lg">
+          <div className="w-10 h-10 sm:w-9 sm:h-9 bg-green-600 rounded-xl flex items-center justify-center text-lg sm:text-lg">
             💰
           </div>
           <div>
-            <h1 className="font-bold text-zinc-100 leading-none">Mis Finanzas</h1>
+            <h1 className="font-bold text-lg sm:text-base text-zinc-100 leading-none">Mis Finanzas</h1>
             <p className="text-xs text-zinc-500 mt-0.5">{user.displayName?.split(" ")[0]}</p>
           </div>
         </div>
@@ -111,11 +111,11 @@ export default function DashboardPage() {
       {!showForm && (
         <button
           onClick={() => { setTab("lista"); setShowForm(true); }}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-green-600 hover:bg-green-500 active:scale-95
+          className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 w-14 h-14 sm:w-16 sm:h-16 bg-green-600 hover:bg-green-500 active:scale-95
                      rounded-2xl shadow-lg shadow-green-900/40 flex items-center justify-center
                      text-white transition-all z-50"
         >
-          <Plus size={26} />
+          <Plus size={28} />
         </button>
       )}
     </div>
